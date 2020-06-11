@@ -6,7 +6,7 @@
 #            This script was tested on a Raspberry Pi 4, with 4Gb RAM
 
 argon_create_file() {
-	if [ -f $1 ]; then
+    if [ -f $1 ]; then
         sudo rm $1
     fi
 	sudo touch $1
@@ -52,6 +52,7 @@ shutdownscript="/lib/systemd/system-shutdown/"$daemonname"-poweroff.py"
 daemonconfigfile=/etc/$daemonname.conf
 configscript=/usr/bin/argonone-config
 removescript=/usr/bin/argonone-uninstall
+tempmonscript=/usr/bin/argonone-tempmon
 
 daemonfanservice=/lib/systemd/system/$daemonname.service
 
@@ -135,7 +136,7 @@ sudo chmod 755 $shutdownscript
 
 
 echo "*****************************************************"
-echo "Step 3 - generating $powerbuttonscript" 
+echo "Step 4 - generating $powerbuttonscript" 
 echo "*****************************************************"
 
 # NOTE(cme): this generates the script to monitor if someone 
@@ -246,7 +247,7 @@ echo '	while True:' >> $powerbuttonscript
 # NOTE(cme): AFAIK vcgencmd is not available on ubuntu, so use sysfs instead
 #echo '		temp = os.popen("vcgencmd measure_temp").readline()' >> $powerbuttonscript
 #echo '		temp = temp.replace("temp=","")' >> $powerbuttonscript
-# echo '		val = float(temp.replace("'"'"'C",""))' >> $powerbuttonscript
+#echo '		val = float(temp.replace("'"'"'C",""))' >> $powerbuttonscript
 
 echo '		temp = os.popen("cat /sys/class/thermal/thermal_zone0/temp").readline()' >> $powerbuttonscript
 echo '		val = float(int(temp)/1000)' >> $powerbuttonscript
@@ -276,8 +277,9 @@ echo >> $powerbuttonscript
 
 sudo chmod 755 $powerbuttonscript
 
-
-exit -1
+echo "*****************************************************"
+echo "Step 5 - generating $daemonfanservice" 
+echo "*****************************************************"
 
 argon_create_file $daemonfanservice
 
@@ -294,6 +296,10 @@ echo '[Install]' >> $daemonfanservice
 echo "WantedBy=multi-user.target" >> $daemonfanservice
 
 sudo chmod 644 $daemonfanservice
+
+echo "*****************************************************"
+echo "Step 6 - generating $removescript" 
+echo "*****************************************************"
 
 argon_create_file $removescript
 
@@ -331,6 +337,11 @@ echo '	echo "Cleanup will complete after restarting the device."' >> $removescri
 echo 'fi' >> $removescript
 
 sudo chmod 755 $removescript
+
+
+echo "*****************************************************"
+echo "Step 7 - generating $configscript" 
+echo "*****************************************************"
 
 argon_create_file $configscript
 
@@ -511,7 +522,6 @@ echo 'fi' >> $configscript
 
 sudo chmod 755 $configscript
 
-
 sudo systemctl daemon-reload
 sudo systemctl enable $daemonname.service
 
@@ -547,6 +557,23 @@ if [ -d "/home/pi/Desktop" ]; then
 fi
 
 
+echo "*****************************************************"
+echo "Step 8 (extra) - generating $tempmonscript" 
+echo "*****************************************************"
+
+#NOTE(cme): extra utility script to monitor the temperature of the CPU using sysfs
+
+argon_create_file $tempmonscript
+
+echo 'while true; do clear; date; cat /sys/class/thermal/thermal_zone0/temp; sleep 1; done' >> $tempmonscript
+
+sudo chmod 755 $tempmonscript
+
+
+
+
+
+
 echo "***************************"
 echo "Argon One Setup Completed."
 echo "***************************"
@@ -556,5 +583,5 @@ if [ -d "/home/pi/Desktop" ]; then
 else
 	echo Use 'argonone-config' to configure fan
 	echo Use 'argonone-uninstall' to uninstall
+	echo Use 'argonone-tempmon' to monitor the temperature
 fi
-echo
