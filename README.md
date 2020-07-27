@@ -20,7 +20,7 @@ There are mainly three changes compared to the original:
 ```bash
 cd /tmp/
 wget https://raw.githubusercontent.com/meuter/argon-one-case-ubuntu-20.04/master/argon1.sh
-/* inspect script if you're paranoid */
+# inspect script if you're paranoid
 chmod a+x argon1.sh
 sudo ./argon1.sh
 ```
