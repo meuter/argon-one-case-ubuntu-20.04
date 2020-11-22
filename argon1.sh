@@ -249,7 +249,8 @@ echo '	while True:' >> $powerbuttonscript
 #echo '		temp = temp.replace("temp=","")' >> $powerbuttonscript
 #echo '		val = float(temp.replace("'"'"'C",""))' >> $powerbuttonscript
 
-echo '		temp = os.popen("cat /sys/class/thermal/thermal_zone0/temp").readline()' >> $powerbuttonscript
+echo '		with open("/sys/class/thermal/thermal_zone0/temp", "r") as fp:' >> $powerbuttonscript
+echo '			temp = fp.readline()' >> $powerbuttonscript
 echo '		val = float(int(temp)/1000)' >> $powerbuttonscript
 
 
