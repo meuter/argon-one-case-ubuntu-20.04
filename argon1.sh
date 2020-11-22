@@ -566,7 +566,7 @@ echo "*****************************************************"
 
 argon_create_file $tempmonscript
 
-echo 'while true; do clear; date; cat /sys/class/thermal/thermal_zone0/temp; sleep 1; done' >> $tempmonscript
+echo 'while true; do clear; date; echo "$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))°C"; sleep 1 ; done' >> $tempmonscript
 
 sudo chmod 755 $tempmonscript
 
