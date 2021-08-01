@@ -587,13 +587,20 @@ echo "*****************************************************"
 
 argon_create_file $tempmonscript
 
-echo 'while true; do clear; date; echo "$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))°C"; sleep 1 ; done' >> $tempmonscript
+(cat <<TEMPMONSCRIPT
+#! /usr/bin/env bash
+
+while true; do
+    date
+    echo "$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))°C"
+    sleep 1
+    # Go back up two lines.
+    echo -ne "\033[2A"
+done
+TEMPMONSCRIPT
+) > $tempmonscript
 
 sudo chmod 755 $tempmonscript
-
-
-
-
 
 
 echo "***************************"
