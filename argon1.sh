@@ -592,7 +592,7 @@ argon_create_file $tempmonscript
 
 while true; do
     date
-    echo "$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))°C"
+    echo "\$(( \$(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))°C"
     sleep 1
     # Go back up two lines.
     echo -ne "\033[2A"
