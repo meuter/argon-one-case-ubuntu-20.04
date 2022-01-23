@@ -587,7 +587,7 @@ echo "*****************************************************"
 
 argon_create_file $tempmonscript
 
-(cat <<TEMPMONSCRIPT
+(cat <<'TEMPMONSCRIPT'
 #! /usr/bin/env bash
 
 while true; do
